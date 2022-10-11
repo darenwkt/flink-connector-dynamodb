@@ -56,7 +56,7 @@ jobs:
         run: ls && pwd
 
       - name: Compile and test flink-connector-dynamodb
-        run: mvn clean install -Dflink.convergence.phase=install -Pcheck-convergence -U -B ${{ env.MVN_CONNECTION_OPTIONS }} -DdistDir=$(pwd)/../flink-1.15.2
+        run: mvn clean deploy -Dflink.convergence.phase=install -Pcheck-convergence -U -B ${{ env.MVN_CONNECTION_OPTIONS }} -DdistDir=$(pwd)/../flink-1.15.2
 
       - name: Check licensing
         run: |
