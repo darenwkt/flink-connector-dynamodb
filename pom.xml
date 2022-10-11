@@ -103,6 +103,13 @@ under the License.
 					<includePluginDependencies>true</includePluginDependencies>
 					<includeProjectDependencies>false</includeProjectDependencies>
 				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>org.apache.flink</groupId>
+						<artifactId>java-ci-tools</artifactId>
+						<version>${flink.version}</version>
+					</dependency>
+				</dependencies>
 			</plugin>
 
 			<plugin>
