@@ -100,16 +100,9 @@ under the License.
 				</executions>
 				<configuration>
 					<mainClass>org.apache.flink.tools.ci.licensecheck.LicenseChecker</mainClass>
-					<includePluginDependencies>true</includePluginDependencies>
-					<includeProjectDependencies>false</includeProjectDependencies>
+					<includePluginDependencies>false</includePluginDependencies>
+					<includeProjectDependencies>true</includeProjectDependencies>
 				</configuration>
-				<dependencies>
-					<dependency>
-						<groupId>org.apache.flink</groupId>
-						<artifactId>java-ci-tools</artifactId>
-						<version>${flink.version}</version>
-					</dependency>
-				</dependencies>
 			</plugin>
 
 			<plugin>
