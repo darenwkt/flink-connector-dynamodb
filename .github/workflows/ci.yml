@@ -50,15 +50,14 @@ jobs:
 
       - name: Compile and test flink-connector-dynamodb
         run: mvn clean install -Dflink.convergence.phase=install -Pcheck-convergence -U -B ${{ env.MVN_CONNECTION_OPTIONS }} \
-           -Dmaven.repo.local=${{ env.MVN_VALIDATION_DIR }} \
           | tee ${{ env.MVN_BUILD_OUTPUT_FILE }}
 
       - name: Show dir
-        run: pwd && ls && ls ${{ env.MVN_VALIDATION_DIR }}
+        run: pwd && ls
 
       - name: Check licensing
         run: |
           mvn ${MVN_COMMON_OPTIONS} exec:java@check-licensing -N \
-            -Dexec.args="${{ env.MVN_BUILD_OUTPUT_FILE }} $(pwd) $(env.MVN_VALIDATION_DIR)}" \
+            -Dexec.args="${{ env.MVN_BUILD_OUTPUT_FILE }} $(pwd) $(pwd/..)" \
             ${{ env.MVN_CONNECTION_OPTIONS }} \
             -Dlog4j.configurationFile=file://$(pwd)/tools/ci/log4j.properties
