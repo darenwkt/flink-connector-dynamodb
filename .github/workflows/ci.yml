@@ -48,18 +48,8 @@ jobs:
         with:
           maven-version: 3.8.5
 
-      - name: Download Flink binary
-        working-directory: ./..
-        run: wget -q -c ${{ env.FLINK_URL }} -O - | tar -xz
-
-      - name: Show current dir
-        run: ls && pwd
-
       - name: Compile and test flink-connector-dynamodb
         run: mvn clean install -Dflink.convergence.phase=install -Pcheck-convergence -U -B ${{ env.MVN_CONNECTION_OPTIONS }} -DdistDir=$(pwd)/../flink-1.15.2
-
-      - name: Show current dir
-        run: ls && pwd
 
       - name: Check licensing
         run: |
