@@ -54,11 +54,11 @@ jobs:
           | tee ${{ env.MVN_BUILD_OUTPUT_FILE }}
 
       - name: Show dir
-        run: pwd && ls
+        run: pwd && ls -R
 
       - name: Check licensing
         run: |
           mvn ${MVN_COMMON_OPTIONS} exec:java@check-licensing -N \
-            -Dexec.args="${{ env.MVN_BUILD_OUTPUT_FILE }} $(pwd) $(pwd)/.." \
+            -Dexec.args="${{ env.MVN_BUILD_OUTPUT_FILE }} $(pwd) $(pwd)" \
             ${{ env.MVN_CONNECTION_OPTIONS }} \
             -Dlog4j.configurationFile=file://$(pwd)/tools/ci/log4j.properties
