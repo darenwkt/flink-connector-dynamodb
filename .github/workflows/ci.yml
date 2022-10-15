@@ -53,9 +53,6 @@ jobs:
           -DaltDeploymentRepository=validation_repository::default::file:${{ env.MVN_VALIDATION_DIR }} \
           | tee ${{ env.MVN_BUILD_OUTPUT_FILE }}
 
-      - name: Show dir
-        run: pwd && ls -R
-
       - name: Check licensing
         run: |
           mvn ${MVN_COMMON_OPTIONS} exec:java@check-licensing -N \
