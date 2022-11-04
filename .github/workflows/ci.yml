@@ -50,7 +50,6 @@ jobs:
 
       - name: Compile and test flink-connector-dynamodb
         run: mvn clean install -Dflink.convergence.phase=install -Pcheck-convergence -U -B ${{ env.MVN_CONNECTION_OPTIONS }} \
-          -DaltDeploymentRepository=validation_repository::default::file:${{ env.MVN_VALIDATION_DIR }} \
           | tee ${{ env.MVN_BUILD_OUTPUT_FILE }}
 
       - name: Check licensing
