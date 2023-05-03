@@ -133,10 +133,11 @@ public class SourceConfigConstants extends AWSConfigConstants {
     public static final long DEFAULT_LIST_SHARDS_BACKOFF_MAX = 5000L;
 
     /** The power constant for exponential backoff between each listShards attempt. */
+    @Deprecated
     public static final String LIST_SHARDS_BACKOFF_EXPONENTIAL_CONSTANT =
             "flink.list.shards.backoff.expconst";
 
-    public static final double DEFAULT_LIST_SHARDS_BACKOFF_EXPONENTIAL_CONSTANT = 1.5;
+    @Deprecated public static final double DEFAULT_LIST_SHARDS_BACKOFF_EXPONENTIAL_CONSTANT = 1.5;
 
     /** The maximum number of describeStreamConsumer attempts if we get a recoverable exception. */
     public static final String DESCRIBE_STREAM_CONSUMER_RETRIES =
@@ -189,10 +190,10 @@ public class SourceConfigConstants extends AWSConfigConstants {
     public static final long DEFAULT_REGISTER_STREAM_CONSUMER_BACKOFF_MAX = 2000L;
 
     /** The power constant for exponential backoff between each registerStreamConsumer attempt. */
-    public static final String REGISTER_STREAM_BACKOFF_EXPONENTIAL_CONSTANT =
+    public static final String REGISTER_STREAM_CONSUMER_BACKOFF_EXPONENTIAL_CONSTANT =
             "flink.stream.registerstreamconsumer.backoff.expconst";
 
-    public static final double DEFAULT_REGISTER_STREAM_BACKOFF_EXPONENTIAL_CONSTANT = 1.5;
+    public static final double DEFAULT_REGISTER_STREAM_CONSUMER_BACKOFF_EXPONENTIAL_CONSTANT = 1.5;
 
     /**
      * The maximum number of deregisterStreamConsumer attempts if we get a recoverable exception.
@@ -210,7 +211,7 @@ public class SourceConfigConstants extends AWSConfigConstants {
             Duration.ofSeconds(60);
 
     /** The base backoff time between each deregisterStreamConsumer attempt. */
-    public static final String DEREGISTER_STREAM_BACKOFF_BASE =
+    public static final String DEREGISTER_STREAM_CONSUMER_BACKOFF_BASE =
             "flink.stream.deregisterstreamconsumer.backoff.base";
 
     public static final long DEFAULT_DEREGISTER_STREAM_CONSUMER_BACKOFF_BASE = 500L;
@@ -222,7 +223,7 @@ public class SourceConfigConstants extends AWSConfigConstants {
     public static final long DEFAULT_DEREGISTER_STREAM_CONSUMER_BACKOFF_MAX = 2000L;
 
     /** The power constant for exponential backoff between each deregisterStreamConsumer attempt. */
-    public static final String DEREGISTER_STREAM_BACKOFF_EXPONENTIAL_CONSTANT =
+    public static final String DEREGISTER_STREAM_CONSUMER_BACKOFF_EXPONENTIAL_CONSTANT =
             "flink.stream.deregisterstreamconsumer.backoff.expconst";
 
     public static final double DEFAULT_DEREGISTER_STREAM_CONSUMER_BACKOFF_EXPONENTIAL_CONSTANT =
@@ -289,9 +290,11 @@ public class SourceConfigConstants extends AWSConfigConstants {
     public static final long DEFAULT_SHARD_GETRECORDS_BACKOFF_MAX = 1000L;
 
     /** The power constant for exponential backoff between each getRecords attempt. */
+    @Deprecated
     public static final String SHARD_GETRECORDS_BACKOFF_EXPONENTIAL_CONSTANT =
             "flink.shard.getrecords.backoff.expconst";
 
+    @Deprecated
     public static final double DEFAULT_SHARD_GETRECORDS_BACKOFF_EXPONENTIAL_CONSTANT = 1.5;
 
     /** The interval between each getRecords request to a AWS Kinesis shard in milliseconds. */
@@ -333,9 +336,11 @@ public class SourceConfigConstants extends AWSConfigConstants {
     public static final long DEFAULT_SHARD_GETITERATOR_BACKOFF_MAX = 1000L;
 
     /** The power constant for exponential backoff between each getShardIterator attempt. */
+    @Deprecated
     public static final String SHARD_GETITERATOR_BACKOFF_EXPONENTIAL_CONSTANT =
             "flink.shard.getiterator.backoff.expconst";
 
+    @Deprecated
     public static final double DEFAULT_SHARD_GETITERATOR_BACKOFF_EXPONENTIAL_CONSTANT = 1.5;
 
     /** The interval between each attempt to discover new shards. */

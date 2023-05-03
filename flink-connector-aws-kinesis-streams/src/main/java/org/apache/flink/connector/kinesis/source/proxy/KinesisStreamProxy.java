@@ -21,7 +21,6 @@ package org.apache.flink.connector.kinesis.source.proxy;
 import org.apache.flink.annotation.Internal;
 import org.apache.flink.connector.kinesis.source.split.model.StartingPosition;
 
-import software.amazon.awssdk.services.kinesis.KinesisClient;
 import software.amazon.awssdk.services.kinesis.model.GetRecordsRequest;
 import software.amazon.awssdk.services.kinesis.model.GetRecordsResponse;
 import software.amazon.awssdk.services.kinesis.model.GetShardIteratorRequest;
@@ -38,9 +37,9 @@ import java.util.List;
 @Internal
 public class KinesisStreamProxy implements StreamProxy {
 
-    private final KinesisClient kinesisClient;
+    private final KinesisClientProxy kinesisClient;
 
-    public KinesisStreamProxy(KinesisClient kinesisClient) {
+    public KinesisStreamProxy(KinesisClientProxy kinesisClient) {
         this.kinesisClient = kinesisClient;
     }
 
@@ -51,6 +50,7 @@ public class KinesisStreamProxy implements StreamProxy {
         ListShardsResponse listShardsResponse;
         String nextToken = null;
         do {
+
             listShardsResponse =
                     kinesisClient.listShards(
                             ListShardsRequest.builder()
@@ -106,11 +106,14 @@ public class KinesisStreamProxy implements StreamProxy {
     }
 
     @Override
-    public GetRecordsResponse getRecords(String streamArn, String shardIterator) {
+    public GetRecordsResponse getRecords(
+            String streamArn, String shardIterator, final int getMaxNumberOfRecordsPerFetch) {
+
         return kinesisClient.getRecords(
                 GetRecordsRequest.builder()
                         .streamARN(streamArn)
                         .shardIterator(shardIterator)
+                        .limit(getMaxNumberOfRecordsPerFetch)
                         .build());
     }
 }

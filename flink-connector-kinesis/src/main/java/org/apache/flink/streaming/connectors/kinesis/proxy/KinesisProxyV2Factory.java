@@ -34,6 +34,7 @@ import software.amazon.awssdk.services.kinesis.KinesisAsyncClient;
 import software.amazon.awssdk.services.kinesis.KinesisClient;
 import software.amazon.awssdk.utils.AttributeMap;
 
+import java.util.Optional;
 import java.util.Properties;
 
 import static java.util.Collections.emptyList;
@@ -108,7 +109,8 @@ public class KinesisProxyV2Factory {
                         httpClient,
                         KinesisClient.builder(),
                         KinesisStreamsConfigConstants.BASE_KINESIS_USER_AGENT_PREFIX_FORMAT,
-                        KinesisStreamsConfigConstants.KINESIS_CLIENT_USER_AGENT_PREFIX);
+                        KinesisStreamsConfigConstants.KINESIS_CLIENT_USER_AGENT_PREFIX,
+                        Optional.empty());
 
         return new KinesisProxySyncV2(client, httpClient, configuration, BACKOFF);
     }

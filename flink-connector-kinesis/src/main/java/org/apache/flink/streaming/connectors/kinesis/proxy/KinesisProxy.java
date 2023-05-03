@@ -524,7 +524,6 @@ public class KinesisProxy implements KinesisProxyInterface {
         while (retryCount <= listShardsMaxRetries
                 && listShardsResults == null) { // retry until we get a result
             try {
-
                 listShardsResults = kinesisClient.listShards(listShardsRequest);
             } catch (LimitExceededException le) {
                 long backoffMillis =

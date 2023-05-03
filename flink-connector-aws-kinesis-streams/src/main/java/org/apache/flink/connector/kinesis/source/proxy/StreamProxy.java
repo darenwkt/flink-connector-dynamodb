@@ -36,5 +36,6 @@ public interface StreamProxy {
 
     String getShardIterator(String streamArn, String shardId, StartingPosition startingPosition);
 
-    GetRecordsResponse getRecords(String streamArn, String shardIterator);
+    GetRecordsResponse getRecords(
+            String streamArn, String shardIterator, final int getMaxNumberOfRecordsPerFetch);
 }

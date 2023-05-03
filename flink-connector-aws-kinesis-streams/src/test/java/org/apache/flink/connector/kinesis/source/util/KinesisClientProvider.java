@@ -18,40 +18,27 @@
 
 package org.apache.flink.connector.kinesis.source.util;
 
+import org.apache.flink.connector.kinesis.source.proxy.KinesisClientProxy;
+
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import software.amazon.awssdk.core.exception.SdkClientException;
-import software.amazon.awssdk.services.kinesis.KinesisClient;
-import software.amazon.awssdk.services.kinesis.model.AccessDeniedException;
-import software.amazon.awssdk.services.kinesis.model.ExpiredIteratorException;
-import software.amazon.awssdk.services.kinesis.model.ExpiredNextTokenException;
 import software.amazon.awssdk.services.kinesis.model.GetRecordsRequest;
 import software.amazon.awssdk.services.kinesis.model.GetRecordsResponse;
 import software.amazon.awssdk.services.kinesis.model.GetShardIteratorRequest;
 import software.amazon.awssdk.services.kinesis.model.GetShardIteratorResponse;
-import software.amazon.awssdk.services.kinesis.model.InvalidArgumentException;
-import software.amazon.awssdk.services.kinesis.model.KinesisException;
-import software.amazon.awssdk.services.kinesis.model.KmsAccessDeniedException;
-import software.amazon.awssdk.services.kinesis.model.KmsDisabledException;
-import software.amazon.awssdk.services.kinesis.model.KmsInvalidStateException;
-import software.amazon.awssdk.services.kinesis.model.KmsNotFoundException;
-import software.amazon.awssdk.services.kinesis.model.KmsOptInRequiredException;
-import software.amazon.awssdk.services.kinesis.model.KmsThrottlingException;
-import software.amazon.awssdk.services.kinesis.model.LimitExceededException;
 import software.amazon.awssdk.services.kinesis.model.ListShardsRequest;
 import software.amazon.awssdk.services.kinesis.model.ListShardsResponse;
-import software.amazon.awssdk.services.kinesis.model.ProvisionedThroughputExceededException;
-import software.amazon.awssdk.services.kinesis.model.ResourceInUseException;
-import software.amazon.awssdk.services.kinesis.model.ResourceNotFoundException;
 import software.amazon.awssdk.services.kinesis.model.Shard;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.List;
+import java.util.Properties;
 import java.util.function.Consumer;
 
 public class KinesisClientProvider {
 
-    public static class TestingKinesisClient implements KinesisClient {
+    public static class TestingKinesisClient extends KinesisClientProxy {
 
         private Deque<ListShardItem> listShardQueue = new ArrayDeque<>();
         private String shardIterator;
@@ -59,12 +46,14 @@ public class KinesisClientProvider {
         private GetRecordsResponse getRecordsResponse;
         private Consumer<GetRecordsRequest> getRecordsValidation;
 
-        @Override
+        public TestingKinesisClient(Properties consumerConfig) {
+            super(consumerConfig);
+        }
+
         public String serviceName() {
             return "kinesis";
         }
 
-        @Override
         public void close() {}
 
         public void setNextShardIterator(String shardIterator) {
@@ -78,9 +67,7 @@ public class KinesisClientProvider {
         @Override
         public GetShardIteratorResponse getShardIterator(
                 GetShardIteratorRequest getShardIteratorRequest)
-                throws ResourceNotFoundException, InvalidArgumentException,
-                        ProvisionedThroughputExceededException, AccessDeniedException,
-                        AwsServiceException, SdkClientException, KinesisException {
+                throws AwsServiceException, SdkClientException {
             getShardIteratorValidation.accept(getShardIteratorRequest);
             return GetShardIteratorResponse.builder().shardIterator(shardIterator).build();
         }
@@ -91,9 +78,7 @@ public class KinesisClientProvider {
 
         @Override
         public ListShardsResponse listShards(ListShardsRequest listShardsRequest)
-                throws ResourceNotFoundException, InvalidArgumentException, LimitExceededException,
-                        ExpiredNextTokenException, ResourceInUseException, AccessDeniedException,
-                        AwsServiceException, SdkClientException, KinesisException {
+                throws AwsServiceException, SdkClientException {
             ListShardItem item = listShardQueue.pop();
 
             item.validation.accept(listShardsRequest);
@@ -113,12 +98,7 @@ public class KinesisClientProvider {
 
         @Override
         public GetRecordsResponse getRecords(GetRecordsRequest getRecordsRequest)
-                throws ResourceNotFoundException, InvalidArgumentException,
-                        ProvisionedThroughputExceededException, ExpiredIteratorException,
-                        KmsDisabledException, KmsInvalidStateException, KmsAccessDeniedException,
-                        KmsNotFoundException, KmsOptInRequiredException, KmsThrottlingException,
-                        AccessDeniedException, AwsServiceException, SdkClientException,
-                        KinesisException {
+                throws AwsServiceException, SdkClientException {
             getRecordsValidation.accept(getRecordsRequest);
             return getRecordsResponse;
         }

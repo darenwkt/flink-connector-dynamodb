@@ -29,6 +29,9 @@ import org.apache.flink.connector.kinesis.source.split.model.StartingPosition;
 
 import org.apache.flink.shaded.guava30.com.google.common.collect.ImmutableSet;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import software.amazon.awssdk.services.kinesis.model.ExpiredIteratorException;
 import software.amazon.awssdk.services.kinesis.model.GetRecordsResponse;
 import software.amazon.awssdk.services.kinesis.model.Record;
 
@@ -39,20 +42,27 @@ import java.util.ArrayDeque;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.Iterator;
+import java.util.Properties;
 import java.util.Set;
 
 /** TODO: Add javadoc. */
 @Internal
 public class PollingKinesisShardSplitReader implements SplitReader<Record, KinesisShardSplit> {
+    private static final Logger LOG = LoggerFactory.getLogger(PollingKinesisShardSplitReader.class);
 
     private static final RecordsWithSplitIds<Record> EMPTY_RECORDS =
             new KinesisRecordsWithSplitIds(Collections.emptyIterator(), null);
 
     private final StreamProxy kinesis;
     private final Deque<KinesisShardSplitState> assignedSplits = new ArrayDeque<>();
+    private final PollingKinesisShardSplitReaderConfiguration
+            pollingKinesisShardSplitReaderConfiguration;
 
-    public PollingKinesisShardSplitReader(StreamProxy kinesisProxy) {
+    public PollingKinesisShardSplitReader(
+            StreamProxy kinesisProxy, final Properties consumerConfig) {
         this.kinesis = kinesisProxy;
+        this.pollingKinesisShardSplitReaderConfiguration =
+                new PollingKinesisShardSplitReaderConfiguration(consumerConfig);
     }
 
     @Override
@@ -73,8 +83,42 @@ public class PollingKinesisShardSplitReader implements SplitReader<Record, Kines
                             split.getNextStartingPosition());
         }
 
-        GetRecordsResponse getRecordsResponse =
-                kinesis.getRecords(split.getKinesisShardSplit().getStreamArn(), shardIterator);
+        GetRecordsResponse getRecordsResponse = null;
+        while (getRecordsResponse == null) {
+            try {
+                getRecordsResponse =
+                        kinesis.getRecords(
+                                split.getKinesisShardSplit().getStreamArn(),
+                                shardIterator,
+                                pollingKinesisShardSplitReaderConfiguration
+                                        .getMaxNumberOfRecordsPerFetch());
+            } catch (ExpiredIteratorException ex) {
+                LOG.warn(
+                        "Encountered an unexpected expired iterator {} for shard {};"
+                                + " refreshing the iterator ...",
+                        shardIterator,
+                        split.getKinesisShardSplit().getShardId());
+
+                shardIterator =
+                        kinesis.getShardIterator(
+                                split.getKinesisShardSplit().getStreamArn(),
+                                split.getKinesisShardSplit().getShardId(),
+                                split.getNextStartingPosition());
+
+                // sleep for the fetch interval before the next getRecords attempt with the
+                // refreshed iterator
+                if (pollingKinesisShardSplitReaderConfiguration.getFetchIntervalMillis() != 0) {
+                    try {
+                        Thread.sleep(
+                                pollingKinesisShardSplitReaderConfiguration
+                                        .getFetchIntervalMillis());
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+        }
+
         split.setNextShardIterator(getRecordsResponse.nextShardIterator());
 
         if (!getRecordsResponse.hasRecords() || getRecordsResponse.records().isEmpty()) {

@@ -16,16 +16,13 @@ public class KinesisStreamProxyProvider {
         return new TestKinesisStreamProxy();
     }
 
-
     public static class TestKinesisStreamProxy implements StreamProxy {
 
         private final List<Shard> shards = new ArrayList<>();
 
         public void addShards(String... shardIds) {
             for (String shardId : shardIds) {
-                shards.add(Shard.builder()
-                    .shardId(shardId)
-                    .build());
+                shards.add(Shard.builder().shardId(shardId).build());
             }
         }
 
@@ -43,14 +40,15 @@ public class KinesisStreamProxyProvider {
         }
 
         @Override
-        public String getShardIterator(String streamArn, String shardId, StartingPosition startingPosition) {
+        public String getShardIterator(
+                String streamArn, String shardId, StartingPosition startingPosition) {
             return null;
         }
 
         @Override
-        public GetRecordsResponse getRecords(String streamArn, String shardIterator) {
+        public GetRecordsResponse getRecords(
+                String streamArn, String shardIterator, final int getMaxNumberOfRecordsPerFetch) {
             return null;
         }
     }
-
 }

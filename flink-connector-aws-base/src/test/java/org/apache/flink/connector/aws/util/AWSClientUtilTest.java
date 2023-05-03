@@ -34,6 +34,7 @@ import software.amazon.awssdk.regions.Region;
 
 import java.net.URI;
 import java.time.Duration;
+import java.util.Optional;
 import java.util.Properties;
 
 import static org.apache.flink.connector.aws.config.AWSConfigConstants.AWS_ENDPOINT;
@@ -99,7 +100,8 @@ class AWSClientUtilTest {
                 clientConfiguration,
                 builder,
                 formatFlinkUserAgentPrefix(
-                        DEFAULT_USER_AGENT_PREFIX_FORMAT + AWSClientUtil.V2_USER_AGENT_SUFFIX));
+                        DEFAULT_USER_AGENT_PREFIX_FORMAT + AWSClientUtil.V2_USER_AGENT_SUFFIX),
+                Optional.empty());
 
         verify(builder).build();
         verify(builder)
@@ -124,7 +126,8 @@ class AWSClientUtilTest {
                 clientConfiguration,
                 builder,
                 formatFlinkUserAgentPrefix(
-                        DEFAULT_USER_AGENT_PREFIX_FORMAT + AWSClientUtil.V2_USER_AGENT_SUFFIX));
+                        DEFAULT_USER_AGENT_PREFIX_FORMAT + AWSClientUtil.V2_USER_AGENT_SUFFIX),
+                Optional.empty());
 
         verify(builder).putAdvancedOption(SdkAdvancedClientOption.USER_AGENT_SUFFIX, "suffix");
     }
@@ -142,7 +145,8 @@ class AWSClientUtilTest {
                 clientConfiguration,
                 builder,
                 formatFlinkUserAgentPrefix(
-                        DEFAULT_USER_AGENT_PREFIX_FORMAT_V2 + AWSClientUtil.V2_USER_AGENT_SUFFIX));
+                        DEFAULT_USER_AGENT_PREFIX_FORMAT_V2 + AWSClientUtil.V2_USER_AGENT_SUFFIX),
+                Optional.empty());
 
         verify(builder).apiCallAttemptTimeout(Duration.ofMillis(500));
     }
@@ -160,7 +164,8 @@ class AWSClientUtilTest {
                 clientConfiguration,
                 builder,
                 formatFlinkUserAgentPrefix(
-                        DEFAULT_USER_AGENT_PREFIX_FORMAT_V2 + AWSClientUtil.V2_USER_AGENT_SUFFIX));
+                        DEFAULT_USER_AGENT_PREFIX_FORMAT_V2 + AWSClientUtil.V2_USER_AGENT_SUFFIX),
+                Optional.empty());
 
         verify(builder).apiCallTimeout(Duration.ofMillis(600));
     }

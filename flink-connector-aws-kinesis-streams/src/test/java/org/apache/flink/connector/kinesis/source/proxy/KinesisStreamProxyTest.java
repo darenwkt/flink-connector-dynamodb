@@ -40,6 +40,7 @@ import software.amazon.awssdk.services.kinesis.model.ShardIteratorType;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import java.util.function.Consumer;
 
 import static org.apache.flink.connector.kinesis.source.util.TestUtil.generateShardId;
@@ -64,7 +65,7 @@ class KinesisStreamProxyTest {
                                 .shards(expectedShards)
                                 .nextToken(null)
                                 .build());
-        TestingKinesisClient testKinesisClient = new TestingKinesisClient();
+        TestingKinesisClient testKinesisClient = new TestingKinesisClient(new Properties());
         testKinesisClient.setListShardsResponses(listShardItems);
 
         KinesisStreamProxy kinesisStreamProxy = new KinesisStreamProxy(testKinesisClient);
@@ -103,7 +104,7 @@ class KinesisStreamProxyTest {
                                 .shards(expectedShards.subList(2, 4))
                                 .nextToken(null)
                                 .build());
-        TestingKinesisClient testKinesisClient = new TestingKinesisClient();
+        TestingKinesisClient testKinesisClient = new TestingKinesisClient(new Properties());
         testKinesisClient.setListShardsResponses(listShardItems);
 
         KinesisStreamProxy kinesisStreamProxy = new KinesisStreamProxy(testKinesisClient);
@@ -120,7 +121,7 @@ class KinesisStreamProxyTest {
         final StartingPosition startingPosition = StartingPosition.fromStart();
         final String expectedShardIterator = "some-shard-iterator";
 
-        TestingKinesisClient testKinesisClient = new TestingKinesisClient();
+        TestingKinesisClient testKinesisClient = new TestingKinesisClient(new Properties());
         testKinesisClient.setNextShardIterator(expectedShardIterator);
         testKinesisClient.setShardIteratorValidation(
                 validateEqual(
@@ -145,7 +146,7 @@ class KinesisStreamProxyTest {
         final StartingPosition startingPosition = StartingPosition.fromTimestamp(timestamp);
         final String expectedShardIterator = "some-shard-iterator";
 
-        TestingKinesisClient testKinesisClient = new TestingKinesisClient();
+        TestingKinesisClient testKinesisClient = new TestingKinesisClient(new Properties());
         testKinesisClient.setNextShardIterator(expectedShardIterator);
         testKinesisClient.setShardIteratorValidation(
                 validateEqual(
@@ -172,7 +173,7 @@ class KinesisStreamProxyTest {
                 StartingPosition.continueFromSequenceNumber(sequenceNumber);
         final String expectedShardIterator = "some-shard-iterator";
 
-        TestingKinesisClient testKinesisClient = new TestingKinesisClient();
+        TestingKinesisClient testKinesisClient = new TestingKinesisClient(new Properties());
         testKinesisClient.setNextShardIterator(expectedShardIterator);
         testKinesisClient.setShardIteratorValidation(
                 validateEqual(
@@ -200,7 +201,7 @@ class KinesisStreamProxyTest {
                         .nextShardIterator("next-iterator")
                         .build();
 
-        TestingKinesisClient testKinesisClient = new TestingKinesisClient();
+        TestingKinesisClient testKinesisClient = new TestingKinesisClient(new Properties());
         testKinesisClient.setGetRecordsResponse(expectedGetRecordsResponse);
         testKinesisClient.setGetRecordsValidation(
                 validateEqual(
@@ -211,7 +212,7 @@ class KinesisStreamProxyTest {
 
         KinesisStreamProxy kinesisStreamProxy = new KinesisStreamProxy(testKinesisClient);
 
-        assertThat(kinesisStreamProxy.getRecords(streamArn, shardIterator))
+        assertThat(kinesisStreamProxy.getRecords(streamArn, shardIterator, 1))
                 .isEqualTo(expectedGetRecordsResponse);
     }
 
