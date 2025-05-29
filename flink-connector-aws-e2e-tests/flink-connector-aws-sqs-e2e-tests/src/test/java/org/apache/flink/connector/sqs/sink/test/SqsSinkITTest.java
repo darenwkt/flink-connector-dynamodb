@@ -24,17 +24,13 @@ import org.apache.flink.connector.aws.testutils.LocalstackContainer;
 import org.apache.flink.connector.sqs.sink.SqsSink;
 import org.apache.flink.connector.sqs.sink.SqsSinkElementConverter;
 import org.apache.flink.connector.sqs.sink.testutils.SqsTestUtils;
-import org.apache.flink.connector.testframe.container.FlinkContainers;
-import org.apache.flink.connector.testframe.container.TestcontainersSettings;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.util.DockerImageVersions;
 import org.apache.flink.util.TestLogger;
 
 import org.assertj.core.api.Assertions;
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -71,37 +67,13 @@ public class SqsSinkITTest extends TestLogger {
                     .withNetwork(network)
                     .withNetworkAliases("localstack");
 
-    public static final TestcontainersSettings TESTCONTAINERS_SETTINGS =
-            TestcontainersSettings.builder()
-                    .environmentVariable("AWS_CBOR_DISABLE", "1")
-                    .environmentVariable(
-                            "FLINK_ENV_JAVA_OPTS",
-                            "-Dorg.apache.flink.sqs.shaded.com.amazonaws.sdk.disableCertChecking -Daws.cborEnabled=false")
-                    .network(network)
-                    .logger(LOG)
-                    .dependsOn(mockSqsContainer)
-                    .build();
-
-    public static final FlinkContainers FLINK =
-            FlinkContainers.builder().withTestcontainersSettings(TESTCONTAINERS_SETTINGS).build();
-
     @Before
-    public void setup() throws Exception {
+    public void setup() {
         httpClient = AWSServicesTestUtils.createHttpClient();
         sqsClient = createSqsClient(mockSqsContainer.getEndpoint(), httpClient);
         env = StreamExecutionEnvironment.getExecutionEnvironment();
 
         LOG.info("Done setting up the localstack.");
-    }
-
-    @BeforeClass
-    public static void setupFlink() throws Exception {
-        FLINK.start();
-    }
-
-    @AfterClass
-    public static void stopFlink() {
-        FLINK.stop();
     }
 
     @After
