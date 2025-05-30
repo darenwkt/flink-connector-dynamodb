@@ -90,6 +90,7 @@ under the License.
                                         <moduleDir>${project.basedir}</moduleDir>
                                     </systemPropertyVariables>
                                     <excludedGroups>requires-aws-credentials</excludedGroups>
+                                    <argLine>--add-opens java.base/java.util=ALL-UNNAMED</argLine>
                                 </configuration>
                             </execution>
                         </executions>
@@ -121,6 +122,7 @@ under the License.
                                     <systemPropertyVariables>
                                         <moduleDir>${project.basedir}</moduleDir>
                                     </systemPropertyVariables>
+                                    <argLine>--add-opens java.base/java.util=ALL-UNNAMED</argLine>
                                 </configuration>
                             </execution>
                         </executions>
